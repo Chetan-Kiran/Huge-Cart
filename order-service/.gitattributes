@@ -1,0 +1,8 @@
+/mvnw text eol=lf
+*.cmd text eol=crlf
+
+# Ignore local MySQL data directory
+mysql/
+
+# Ignore secrets/keys if generated locally
+*.pem
