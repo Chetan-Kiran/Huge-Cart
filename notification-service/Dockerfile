@@ -1,12 +1,14 @@
-# Use Java 21 base image (or match your pom.xml)
-FROM eclipse-temurin:17-jdk-jammy
+FROM maven:3.9-eclipse-temurin-17 AS builder
 
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Copy the built JAR file into the container
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
+FROM eclipse-temurin:17-jdk
+WORKDIR /app
+
+COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
