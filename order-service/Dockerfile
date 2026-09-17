@@ -1,15 +1,28 @@
-# Use a base image with Java 21 (matching your pom.xml)
-FROM eclipse-temurin:17-jdk-jammy
+# ---------- Build Stage ----------
+FROM maven:3.9-eclipse-temurin-17 AS builder
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the built Spring Boot application JAR file into the container
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
+# Copy pom.xml first
+COPY pom.xml .
 
-# Expose the port your order service listens on (server.port=8081 in application.properties)
+# Download dependencies
+RUN mvn dependency:go-offline
+
+# Copy source code
+COPY src ./src
+
+# Build jar
+RUN mvn clean package -DskipTests
+
+# ---------- Runtime Stage ----------
+FROM eclipse-temurin:17-jdk-jammy
+
+WORKDIR /app
+
+# Copy built jar from builder stage
+COPY --from=builder /app/target/*.jar app.jar
+
 EXPOSE 8080
 
-# Command to run the application when the container starts
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
