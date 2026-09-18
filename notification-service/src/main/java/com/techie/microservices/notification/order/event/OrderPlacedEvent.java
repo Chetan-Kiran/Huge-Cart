@@ -1,5 +1,5 @@
 package com.techie.microservices.notification.order.event;
-
+ 
 public class OrderPlacedEvent {
 
     private String orderNumber;

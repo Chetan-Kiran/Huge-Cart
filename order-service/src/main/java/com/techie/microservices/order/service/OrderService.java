@@ -36,65 +36,68 @@ public class OrderService {
 
     public boolean placeOrder(OrderRequest orderRequest) {
 
-        try {
+    try {
 
-            // 1. Check Inventory
-            boolean inStock = inventoryClient.isInStock(
-                    orderRequest.skuCode(),
-                    orderRequest.quantity());
+        // 1. Check inventory
+        boolean inStock = inventoryClient.isInStock(
+                orderRequest.skuCode(),
+                orderRequest.quantity());
 
-            if (!inStock) {
-                log.warn("Product {} is out of stock.", orderRequest.skuCode());
-                return false;
-            }
-
-            // 2. Read customer details safely
-            OrderRequest.UserDetails user = orderRequest.userDetails();
-
-            // 3. Create Order
-            Order order = Order.builder()
-                    .orderNumber(UUID.randomUUID().toString())
-                    .skuCode(orderRequest.skuCode())
-                    .quantity(orderRequest.quantity())
-                    .price(orderRequest.price())
-                    .firstName(user != null ? user.firstName() : "Guest")
-                    .email(user != null ? user.email() : "guest@hugecart.com")
-                    .createdAt(LocalDateTime.now())
-                    .build();
-
-            orderRepository.save(order);
-
-            log.info("Order Saved : {}", order.getOrderNumber());
-
-            // 4. Decrease Inventory
-            ResponseEntity<InventoryResponse> response =
-                    inventoryClient.decreaseInventory(
-                            new InventoryRequest(
-                                    orderRequest.skuCode(),
-                                    orderRequest.quantity()));
-
-            if (!response.getStatusCode().is2xxSuccessful()
-                    || response.getBody() == null) {
-
-                log.error("Inventory update failed.");
-                return false;
-            }
-
-            // 5. Kafka Event
-            kafkaTemplate.send(
-                    "order-placed",
-                    new OrderPlacedEvent(order.getOrderNumber(), order.getEmail()));
-
-            log.info("Kafka Event Sent.");
-
-            return true;
-
-        } catch (Exception e) {
-
-            log.error("Order Failed", e);
+        if (!inStock) {
+            log.warn("Product {} is out of stock.", orderRequest.skuCode());
             return false;
         }
+
+        // 2. Read customer details safely
+        OrderRequest.UserDetails user = orderRequest.userDetails();
+
+        // 3. Create order
+        Order order = Order.builder()
+                .orderNumber(UUID.randomUUID().toString())
+                .skuCode(orderRequest.skuCode())
+                .quantity(orderRequest.quantity())
+                .price(orderRequest.price())
+                .firstName(user != null ? user.firstName() : "Guest")
+                .email(user != null ? user.email() : "guest@hugecart.com")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        orderRepository.save(order);
+        log.info("Order Saved: {}", order.getOrderNumber());
+
+        // 4. Decrease inventory
+        ResponseEntity<InventoryResponse> response =
+                inventoryClient.decreaseInventory(
+                        new InventoryRequest(
+                                orderRequest.skuCode(),
+                                orderRequest.quantity()));
+
+        if (!response.getStatusCode().is2xxSuccessful()
+                || response.getBody() == null) {
+
+            log.error("Inventory update failed.");
+            return false;
+        }
+
+        // 5. Publish Kafka event
+        OrderPlacedEvent event = new OrderPlacedEvent(
+                order.getOrderNumber(),
+                order.getEmail(),
+                order.getFirstName(),
+                ""   // lastName for now
+        );
+
+        kafkaTemplate.send("order-placed", event);
+
+        log.info("Kafka Event Sent Successfully: {}", order.getOrderNumber());
+
+        return true;
+
+    } catch (Exception e) {
+        log.error("Order Failed", e);
+        return false;
     }
+}
 
     // ---------------- GET ALL ORDERS ----------------
 
