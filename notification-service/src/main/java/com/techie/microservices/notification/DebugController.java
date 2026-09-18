@@ -39,4 +39,12 @@ public class DebugController {
 
         return map;
     }
+
+    @GetMapping("/debug/key")
+    public String key() throws Exception {
+        var path = Path.of("/etc/secrets/service-key-pkcs8.pem");
+        var key = Files.readString(path);
+
+        return key.substring(0, 35);
+    }
 }
