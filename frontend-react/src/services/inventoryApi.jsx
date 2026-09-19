@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios from "./axiosConfig"
 
-const BASE = "http://localhost:8080/api/inventory";
+const BASE = `${import.meta.env.VITE_API_URL}/api/inventory`;
 
 // GET INVENTORY BY SKU
 export const getInventory = async (skuCode) => {

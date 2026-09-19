@@ -1,6 +1,6 @@
 import axios from "axios";
-
-const API = "http://localhost:8080/api/product";
+import axios from "./axiosConfig"
+const API = `${import.meta.env.VITE_API_URL}/api/product`;
 
 // GET ALL PRODUCTS
 export const getProducts = async () => {

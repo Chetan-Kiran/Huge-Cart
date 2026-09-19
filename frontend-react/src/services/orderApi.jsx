@@ -1,6 +1,6 @@
 import axios from "axios";
-
-const API = "http://localhost:8083/api/order";
+import axios from "./axiosConfig"
+const API = `${import.meta.env.VITE_API_URL}/api/order`;
 
 // POST Order (already used in Checkout)
 export const placeOrder = async (order) => {
