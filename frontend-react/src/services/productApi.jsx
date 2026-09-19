@@ -1,6 +1,6 @@
-import axios from "axios";
-import axios from "./axiosConfig"
-const API = `${import.meta.env.VITE_API_URL}/api/product`;
+import axios from "./axiosConfig";
+
+const API = "/api/product";
 
 // GET ALL PRODUCTS
 export const getProducts = async () => {

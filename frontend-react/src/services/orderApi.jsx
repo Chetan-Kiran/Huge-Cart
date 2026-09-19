@@ -1,14 +1,14 @@
-import axios from "axios";
-import axios from "./axiosConfig"
-const API = `${import.meta.env.VITE_API_URL}/api/order`;
+import axios from "./axiosConfig";
 
-// POST Order (already used in Checkout)
+const API = "/api/order";
+
+// PLACE ORDER
 export const placeOrder = async (order) => {
   const response = await axios.post(API, order);
   return response.data;
 };
 
-// GET All Orders (Admin Dashboard)
+// GET ALL ORDERS
 export const getAllOrders = async () => {
   const response = await axios.get(API);
   return response.data;

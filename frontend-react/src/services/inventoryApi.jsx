@@ -1,19 +1,16 @@
-import axios from "./axiosConfig"
+import axios from "./axiosConfig";
 
-const BASE = `${import.meta.env.VITE_API_URL}/api/inventory`;
+const API = "/api/inventory";
 
-// GET INVENTORY BY SKU
 export const getInventory = async (skuCode) => {
-  const response = await axios.get(`${BASE}/${skuCode}`);
+  const response = await axios.get(`${API}/${skuCode}`);
   return response.data;
 };
 
-// UPDATE INVENTORY QUANTITY
 export const updateInventoryQuantity = async (skuCode, quantity) => {
-  const response = await axios.post(`${BASE}/updateQuantity`, {
+  const response = await axios.post(`${API}/updateQuantity`, {
     skuCode,
     quantity,
   });
-
   return response.data;
 };
