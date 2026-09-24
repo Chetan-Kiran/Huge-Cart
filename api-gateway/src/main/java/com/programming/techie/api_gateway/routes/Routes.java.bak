@@ -1,0 +1,39 @@
+package com.programming.techie.api_gateway.routes;
+
+import static org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions.route;
+import static org.springframework.cloud.gateway.server.mvc.handler.HandlerFunctions.http;
+import static org.springframework.web.servlet.function.RequestPredicates.path;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.function.RouterFunction;
+import org.springframework.web.servlet.function.ServerResponse;
+
+@Configuration
+public class Routes {
+
+    @Value("${product.service.url}")
+    private String productServiceUrl;
+
+    @Value("${inventory.service.url}")
+    private String inventoryServiceUrl;
+
+    @Value("${order.service.url}")
+    private String orderServiceUrl;
+
+    @Bean
+    public RouterFunction<ServerResponse> gatewayRoutes() {
+
+        return route("product-service")
+                .route(path("/api/product/**"), http(productServiceUrl))
+
+                .and(route("inventory-service")
+                        .route(path("/api/inventory/**"), http(inventoryServiceUrl)))
+
+                .and(route("order-service")
+                        .route(path("/api/order/**"), http(orderServiceUrl)))
+
+                .build();
+    }
+}
