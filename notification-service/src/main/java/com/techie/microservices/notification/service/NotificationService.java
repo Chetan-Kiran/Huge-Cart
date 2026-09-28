@@ -1,6 +1,6 @@
 package com.techie.microservices.notification.service;
 
-import com.techie.microservices.order.event.OrderPlacedEvent;
+import com.techie.microservices.notification.order.event.OrderPlacedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;

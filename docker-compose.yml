@@ -79,25 +79,31 @@ services:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: broker:29092
 
   notification-service:
-    image: ankurgangwar/notification-service:latest
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+
     container_name: notification-service
+
     ports:
       - "8084:8080"
+
     depends_on:
       - broker
+
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: broker:29092
       SPRING_MAIL_HOST: sandbox.smtp.mailtrap.io
-      SPRING_MAIL_PORT: "2525"
-      SPRING_MAIL_USERNAME: username
-      SPRING_MAIL_PASSWORD: password
+      SPRING_MAIL_PORT: 2525
+      SPRING_MAIL_USERNAME: ${MAILTRAP_USERNAME}
+      SPRING_MAIL_PASSWORD: ${MAILTRAP_PASSWORD}
 
   api-gateway:
     build:
       context: ./api-gateway
     container_name: api-gateway
     ports:
-      - "8080:8080"
+      - "8088:8080"
     depends_on:
       - product-service
       - inventory-service
@@ -147,12 +153,16 @@ services:
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
+
     container_name: kafka-ui
+
     ports:
       - "8086:8080"
+
     depends_on:
       - broker
       - schema-registry
+
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:29092

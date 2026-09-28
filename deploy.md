@@ -1,36 +1,50 @@
-spring.application.name=order-service
+# notification
+
+spring.mail.host=sandbox.smtp.mailtrap.io
+spring.mail.port=2525
+spring.mail.username=${MAILTRAP_USERNAME}
+spring.mail.password=${MAILTRAP_PASSWORD}
+
+# Product Service MongoDB
+
+spring.application.name=inventory-service
+
 server.port=8080
 
-# ===============================
-# MySQL Database
-# ===============================
-spring.datasource.url=${MYSQL_URL}
-spring.datasource.username=${MYSQL_USERNAME}
-spring.datasource.password=${MYSQL_PASSWORD}
+spring.datasource.url=jdbc:mysql://mysql-inventory-service:3306/inventory_service
+spring.datasource.username=root
+spring.datasource.password=mysql
 
 spring.jpa.hibernate.ddl-auto=update
 
-# ===============================
-# Inventory Service URL
-# ===============================
-inventory.url=${INVENTORY_SERVICE_URL}
-
-# ===============================
-# Swagger
-# ===============================
 springdoc.swagger-ui.path=/swagger-ui.html
 springdoc.api-docs.path=/api-docs
 
-# ===============================
+# oder-service 
+spring.application.name=order-service
+
+# MySQL
+spring.datasource.url=jdbc:mysql://mysql-order-service:3306/order_service
+spring.datasource.username=root
+spring.datasource.password=mysql
+
+spring.jpa.hibernate.ddl-auto=update
+
+server.port=8080
+
+# Inventory Service
+inventory.url=http://inventory-service:8080
+
+# Swagger
+springdoc.swagger-ui.path=/swagger-ui.html
+springdoc.api-docs.path=/api-docs
+
 # Actuator
-# ===============================
 management.health.circuitbreakers.enabled=true
-management.endpoints.web.exposure.include=health,info
+management.endpoints.web.exposure.include=*
 management.endpoint.health.show-details=always
 
-# ===============================
 # Resilience4j Circuit Breaker
-# ===============================
 resilience4j.circuitbreaker.instances.inventory.registerHealthIndicator=true
 resilience4j.circuitbreaker.instances.inventory.event-consumer-buffer-size=10
 resilience4j.circuitbreaker.instances.inventory.slidingWindowSize=10
@@ -41,22 +55,15 @@ resilience4j.circuitbreaker.instances.inventory.permittedNumberOfCallsInHalfOpen
 resilience4j.circuitbreaker.instances.inventory.automaticTransitionFromOpenToHalfOpenEnabled=true
 resilience4j.circuitbreaker.instances.inventory.minimum-number-of-calls=5
 
-# ===============================
-# Time Limiter
-# ===============================
+# Timeout
 resilience4j.timelimiter.instances.inventory.timeout-duration=3s
 
-# ===============================
 # Retry
-# ===============================
 resilience4j.retry.instances.inventory.max-attempts=3
 resilience4j.retry.instances.inventory.wait-duration=2s
 
-# ===============================
 # Kafka
-# ===============================
-spring.kafka.bootstrap-servers=${KAFKA_BOOTSTRAP_SERVER}
-
+spring.kafka.bootstrap-servers=broker:29092
 spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
 spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer
 
@@ -65,3 +72,15 @@ spring.kafka.consumer.auto-offset-reset=earliest
 spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer
 spring.kafka.consumer.value-deserializer=org.springframework.kafka.support.serializer.JsonDeserializer
 spring.kafka.consumer.properties.spring.json.trusted.packages=com.techie.microservices.order.event
+
+# product
+spring.application.name=product-service
+
+server.port=8080
+
+spring.data.mongodb.uri=mongodb://root:password@mongodb-product-service:27017/product-service?authSource=admin
+
+inventory.service.url=http://inventory-service:8080/api/inventory
+
+springdoc.swagger-ui.path=/swagger-ui.html
+springdoc.api-docs.path=/api-docs
