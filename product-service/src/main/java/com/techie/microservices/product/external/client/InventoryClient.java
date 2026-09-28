@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "inventory-client", url = "${inventory.service.url}")
 public interface InventoryClient {
 
-    @PostMapping("/updateQuantity")
+    @PostMapping("/api/inventory/updateQuantity")
     ResponseEntity<InventoryResponse> upsertInventory(@RequestBody InventoryRequest request);
 
-    @GetMapping("/{skuCode}")
+    @GetMapping("/api/inventory/{skuCode}")
     public ResponseEntity<InventoryResponse> getInventoryBySkuCode(@PathVariable String skuCode);
 }
