@@ -155,3 +155,11 @@ tmp/
 !.gitkeep
 product-service/data/
 BOOT-INF/
+
+
+**/volume-data/
+**/docker/mysql/data/
+
+**/volume-data/
+**/docker/mysql/
+**/target/
