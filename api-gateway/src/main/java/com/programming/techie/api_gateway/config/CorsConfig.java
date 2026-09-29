@@ -15,7 +15,7 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:5173",
-                    "https://hugecart-frontend.onrender.com/"
+                    "https://hugecart-frontend.onrender.com"
                 )
                 .allowedMethods("*")
                 .allowedHeaders("*")
